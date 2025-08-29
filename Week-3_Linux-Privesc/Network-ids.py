@@ -1,28 +1,20 @@
-# ----------------------------------------
-# Simple Network IDS (Beginner Friendly)
-# Detects:
-#  1. ICMP pings (echo request & reply)
-#  2. TCP SYN attempts (connection starts)
-#  3. Port scans (SYN, NULL, FIN scans)
-#  4. Suspicious activity (ICMP floods, high-rate SYNs)
-# ----------------------------------------
 
 from scapy.all import rdpcap, IP, TCP, ICMP
 from collections import defaultdict
 import time
 
-# ======== SETTINGS / THRESHOLDS ========
+
 ICMP_FLOOD_LIMIT = 20       # Max pings from same IP before alert
 SYN_SCAN_PORT_LIMIT = 10    # Ports contacted before SYN scan alert
 TIME_WINDOW = 5             # Seconds to check for high-rate SYNs
 HIGH_RATE_SYN_LIMIT = 15    # SYNs in TIME_WINDOW before alert
 
-# ======== TRACKERS ========
+
 icmp_counter = defaultdict(int)     # Count ICMP pings from each IP
 syn_ports = defaultdict(set)        # Ports each IP tries to contact
 syn_timestamps = defaultdict(list)  # When each IP sends SYN packets
 
-# ======== DETECTION FUNCTIONS ========
+# DETECTION FUNCTIONS
 
 def detect_icmp(pkt):
     """Detect ICMP ping requests and replies."""
@@ -73,7 +65,7 @@ def detect_tcp(pkt):
         elif flags == "F":
             print(f"[ALERT] FIN scan from {pkt[IP].src} to {pkt[IP].dst}:{pkt[TCP].dport}")
 
-# ======== MAIN FUNCTION ========
+# MAIN FUNCTION
 
 def main():
     # Ask user for PCAP file path
@@ -99,3 +91,4 @@ def main():
 # ======== RUN SCRIPT ========
 if __name__ == "__main__":
     main()
+
