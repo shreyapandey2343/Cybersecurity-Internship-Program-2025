@@ -2,22 +2,18 @@ from scapy.all import rdpcap, IP, TCP, ICMP, Raw
 from collections import defaultdict
 import re
 
-# -------------------------
-# Tracking Data Structures
-# -------------------------
+
 connection_counts = defaultdict(int)
 multi_port_attempts = defaultdict(set)
 
-# Suspicious payload regex patterns
+
 suspicious_payloads = [
-    re.compile(rb"(\%27)|(\')|(\-\-)|(\%23)|(#)", re.IGNORECASE),  # SQLi
-    re.compile(rb"(\%3C)|<script>", re.IGNORECASE),               # XSS
-    re.compile(rb"union.*select", re.IGNORECASE),                  # SQLi
+    re.compile(rb"(\%27)|(\')|(\-\-)|(\%23)|(#)", re.IGNORECASE),  
+    re.compile(rb"(\%3C)|<script>", re.IGNORECASE),              
+    re.compile(rb"union.*select", re.IGNORECASE),                  
 ]
 
-# -------------------------
-# Detection Function
-# -------------------------
+
 def detect_packet(pkt, idx):
     if not pkt.haslayer(IP):
         return "ALLOW"
@@ -68,9 +64,7 @@ def detect_packet(pkt, idx):
 
     return "ALLOW"
 
-# -------------------------
-# Main Runner
-# -------------------------
+
 def run_ips(pcap_file):
     print(f"\n[*] Reading packets from {pcap_file} ...")
     packets = rdpcap(pcap_file)
@@ -84,5 +78,5 @@ def run_ips(pcap_file):
             print(f"[{i}] Non-IP packet : {verdict}")
 
 if __name__ == "__main__":
-    # 👇 Change filename here if needed
+  
     run_ips("nmap_zombie_scan.pcap")
